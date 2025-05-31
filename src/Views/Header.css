@@ -1,0 +1,149 @@
+/* Header2.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;500;700&family=Orbitron:wght@400;700&display=swap');
+
+.header-container {
+  background-color: #0B1F3B; /* deep, dark-blue base */
+  width: 100%;
+  padding: 60px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.header-card {
+  background-color: #ffffff;
+  max-width: 1200px;
+  width: 80%;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  padding: 40px 60px;
+}
+
+/* Left side: logo + hex pattern overlay */
+.header-graphic {
+  position: relative;
+  flex: 0 0 200px; /* reserve space for logo/hex overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-logo {
+  width: 160px;
+  height: auto;
+  z-index: 2;
+}
+
+/* Simple hexagon pattern in the background */
+/* You can replace this with an actual SVG or more complex pattern */
+.hex-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.15;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hex-row {
+  display: flex;
+  gap: 6px;
+}
+
+.hex-row.offset {
+  margin-left: 24px;
+}
+
+.hex {
+  width: 24px;
+  height: 13.86px; /* = 24 * sqrt(3)/4 */
+  background-color: #0B1F3B;
+  clip-path: polygon(
+    25% 6.93%,
+    75% 6.93%,
+    100% 50%,
+    75% 93.07%,
+    25% 93.07%,
+    0% 50%
+  );
+}
+
+/* Right side: text */
+.header-text {
+  flex: 1;
+  margin-left: 40px;
+}
+
+.header-title {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 3rem;
+  color: #0B1F3B;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.header-tagline {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 300;
+  font-size: 1.25rem;
+  color: #0B1F3B;
+  margin-top: 16px;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+}
+
+/* Responsive tweaks */
+@media (max-width: 1024px) {
+  .header-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 30px 20px;
+  }
+
+  .header-graphic {
+    margin-bottom: 24px;
+  }
+
+  .header-text {
+    margin-left: 0;
+  }
+
+  .header-title {
+    font-size: 2.5rem;
+  }
+
+  .header-tagline {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .header-card {
+    padding: 20px 16px;
+  }
+
+  .header-title {
+    font-size: 2rem;
+  }
+
+  .header-tagline {
+    font-size: 1rem;
+  }
+
+  .header-logo {
+    width: 120px;
+  }
+
+  .hex {
+    width: 18px;
+    height: 10.39px; /* 18 * sqrt(3)/4 */
+  }
+}
