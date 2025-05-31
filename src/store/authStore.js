@@ -25,7 +25,26 @@ const useAuthStore = create((set) => ({
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       set({ user: userCredential.user, loading: false });
     } catch (error) {
-      set({ error: error.message, loading: false });
+      let errorMessage = 'An error occurred during login.';
+      
+      // Handle specific Firebase auth errors
+      switch (error.code) {
+        case 'auth/invalid-credential':
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+          errorMessage = 'Incorrect email or password.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many failed attempts. Please try again later.';
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'This account has been disabled.';
+          break;
+        default:
+          errorMessage = 'An error occurred during login.';
+      }
+      
+      set({ error: errorMessage, loading: false });
     }
   },
 
