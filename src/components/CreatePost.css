@@ -1,0 +1,60 @@
+.create-post-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.create-post-form {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.post-input {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 16px;
+  resize: vertical;
+  margin-bottom: 15px;
+  transition: border-color 0.3s ease;
+}
+
+.post-input:focus {
+  outline: none;
+  border-color: #0B1F3B;
+}
+
+.post-button {
+  background-color: #0B1F3B;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  float: right;
+}
+
+.post-button:hover:not(:disabled) {
+  background-color: #1a2f4f;
+}
+
+.post-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Clear the float */
+.create-post-form::after {
+  content: '';
+  display: table;
+  clear: both;
+} 

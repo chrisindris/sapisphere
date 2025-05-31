@@ -4,6 +4,7 @@ import './App.css';
 import Header from './Views/Header';
 import Menu from './Views/Menu';
 import Login from './components/Login';
+import CreatePost from './components/CreatePost';
 import useAuthStore from './store/authStore';
 
 function App() {
@@ -22,8 +23,7 @@ function App() {
         <>
           <Menu />
           <div className="main-content">
-            {/* We'll add the post creation and queue components here later */}
-            <p>Welcome, {user.email}!</p>
+            <CreatePost />
           </div>
         </>
       )}
