@@ -5,17 +5,28 @@ import './Login.css';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, error, loading } = useAuthStore();
+  const [isRegistering, setIsRegistering] = useState(false);
+  const { login, register, error, loading } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(email, password);
+    if (isRegistering) {
+      await register(email, password);
+    } else {
+      await login(email, password);
+    }
+  };
+
+  const toggleMode = () => {
+    setIsRegistering(!isRegistering);
+    setEmail('');
+    setPassword('');
   };
 
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2>Welcome to Sapisphere</h2>
+        <h2>{isRegistering ? 'Create Account' : 'Welcome to Sapisphere'}</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email</label>
@@ -39,9 +50,14 @@ const Login = () => {
           </div>
           {error && <div className="error-message">{error}</div>}
           <button type="submit" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Please wait...' : (isRegistering ? 'Create Account' : 'Sign In')}
           </button>
         </form>
+        <div className="toggle-mode">
+          <button type="button" className="toggle-button" onClick={toggleMode}>
+            {isRegistering ? 'Already have an account? Sign In' : 'Need an account? Register'}
+          </button>
+        </div>
       </div>
     </div>
   );
