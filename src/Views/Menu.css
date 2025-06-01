@@ -13,6 +13,12 @@
     align-items: center;
   }
   
+  .menu-left {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+  
   .user-info {
     font-family: 'Exo 2', sans-serif;
     color: #0B1F3B;
@@ -23,9 +29,29 @@
     font-weight: 500;
   }
   
-  .user-email {
+  .menu-nav {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-link {
+    color: #0B1F3B;
+    text-decoration: none;
+    font-family: 'Exo 2', sans-serif;
     font-size: 0.9rem;
-    opacity: 0.8;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-link:hover {
+    background-color: #f0f2f5;
+  }
+  
+  .nav-link.active {
+    background-color: #0B1F3B;
+    color: white;
   }
   
   .logout-button {
@@ -46,10 +72,19 @@
     color: #ffffff;
   }
   
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     .menu-content {
       flex-direction: column;
-      gap: 10px;
+      gap: 15px;
+    }
+  
+    .menu-left {
+      flex-direction: column;
+      gap: 15px;
       text-align: center;
+    }
+  
+    .menu-nav {
+      justify-content: center;
     }
   }

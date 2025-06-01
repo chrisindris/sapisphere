@@ -1,0 +1,109 @@
+.users-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.users-container h2 {
+  color: #0B1F3B;
+  font-family: 'Orbitron', sans-serif;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.user-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.user-header {
+  background-color: #0B1F3B;
+  padding: 20px;
+  color: white;
+}
+
+.user-header h3 {
+  margin: 0;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.user-content {
+  padding: 20px;
+}
+
+.user-field {
+  margin-bottom: 15px;
+}
+
+.user-field:last-child {
+  margin-bottom: 0;
+}
+
+.user-field label {
+  display: block;
+  color: #666;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.field-value {
+  color: #0B1F3B;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 1rem;
+}
+
+.expertise-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.expertise-tag {
+  background-color: #f0f2f5;
+  color: #0B1F3B;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.no-expertise {
+  color: #666;
+  font-style: italic;
+}
+
+.users-loading,
+.no-users {
+  text-align: center;
+  padding: 40px;
+  font-family: 'Exo 2', sans-serif;
+  color: #0B1F3B;
+  font-size: 1.1rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .users-grid {
+    grid-template-columns: 1fr;
+  }
+} 
