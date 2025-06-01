@@ -36,17 +36,19 @@ export const generateLLMResponse = async (userPost) => {
       model.generateContent(responsePrompt)
     ]);
 
-    const expertise = (await expertiseResult.response).text();
+    const expertise = (await expertiseResult.response).text().trim();
     const response = (await responseResult.response).text();
 
     console.log('Expertise analysis result:', expertise);
     console.log('Response result:', response);
 
-    // Always return the expertise detection result, even if it's "NO_EXPERTISE"
+    // Only set detectedExpertise if it's not "NO_EXPERTISE"
+    const hasExpertise = expertise !== "NO_EXPERTISE";
+
     return {
       text: response,
       modelName: "Gemini 1.5 Flash",
-      detectedExpertise: expertise !== "NO_EXPERTISE" ? expertise : null,
+      detectedExpertise: hasExpertise ? expertise : null,
       expertiseAnalysis: expertise // Include the raw expertise analysis
     };
   } catch (error) {
