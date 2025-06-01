@@ -5,13 +5,14 @@ import './Login.css';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const { login, register, error, loading } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isRegistering) {
-      await register(email, password);
+      await register(email, password, displayName);
     } else {
       await login(email, password);
     }
@@ -21,6 +22,7 @@ const Login = () => {
     setIsRegistering(!isRegistering);
     setEmail('');
     setPassword('');
+    setDisplayName('');
   };
 
   return (
@@ -28,6 +30,18 @@ const Login = () => {
       <div className="login-card">
         <h2>{isRegistering ? 'Create Account' : 'Welcome to Sapisphere'}</h2>
         <form onSubmit={handleSubmit}>
+          {isRegistering && (
+            <div className="form-group">
+              <label htmlFor="displayName">Display Name</label>
+              <input
+                type="text"
+                id="displayName"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                required
+              />
+            </div>
+          )}
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input

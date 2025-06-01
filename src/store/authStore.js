@@ -1,11 +1,12 @@
 import { create } from 'zustand';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { 
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged
 } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 const useAuthStore = create((set) => ({
   user: null,
@@ -20,10 +21,18 @@ const useAuthStore = create((set) => ({
   },
 
   // Register function
-  register: async (email, password) => {
+  register: async (email, password, displayName) => {
     try {
       set({ loading: true, error: null });
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Create user document in Firestore
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        displayName,
+        email,
+        createdAt: new Date().toISOString()
+      });
+
       set({ user: userCredential.user, loading: false });
     } catch (error) {
       let errorMessage = 'An error occurred during registration.';

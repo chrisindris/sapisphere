@@ -5,5 +5,10 @@ service cloud.firestore {
       allow read: if true;            // open global feed
       allow write: if request.auth != null;  // only signed-in users
     }
+    
+    match /users/{userId} {
+      allow read: if true;  // Public profiles
+      allow write: if request.auth != null && request.auth.uid == userId;  // Only the user can edit their profile
+    }
   }
 } 
