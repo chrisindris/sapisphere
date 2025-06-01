@@ -1,7 +1,75 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { db } from '../firebase';
+import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
 
 // Initialize the Gemini API
 const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
+
+// Function to calculate similarity between two expertises using LLM
+const calculateExpertiseSimilarity = async (expertise1, expertise2) => {
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    
+    const prompt = `Rate the similarity between these two areas of expertise on a scale of 0 to 100, where 0 means completely unrelated and 100 means identical or extremely closely related.
+    Consider factors like:
+    - Shared knowledge domains
+    - Common skills and tools
+    - Typical career paths
+    - Educational background
+    - Industry overlap
+    
+    Expertise 1: "${expertise1}"
+    Expertise 2: "${expertise2}"
+    
+    Respond with ONLY a number between 0 and 100.`;
+
+    const result = await model.generateContent(prompt);
+    const similarity = parseInt((await result.response).text().trim());
+    
+    // Ensure the result is a valid number between 0 and 100
+    return Math.min(Math.max(isNaN(similarity) ? 50 : similarity, 0), 100);
+  } catch (error) {
+    console.error('Error calculating expertise similarity:', error);
+    return 50; // Default to middle value on error
+  }
+};
+
+// Function to update expertise similarities in Firestore
+const updateExpertiseSimilarities = async (newExpertise) => {
+  try {
+    // Get all existing expertises
+    const expertisesSnapshot = await getDocs(collection(db, 'expertises'));
+    const existingExpertises = expertisesSnapshot.docs.map(doc => doc.id);
+    
+    // Calculate similarities with existing expertises
+    const similarities = {};
+    for (const existingExpertise of existingExpertises) {
+      const similarity = await calculateExpertiseSimilarity(newExpertise, existingExpertise);
+      similarities[existingExpertise] = similarity;
+    }
+    
+    // Add the new expertise document
+    await setDoc(doc(db, 'expertises', newExpertise), {
+      similarity: similarities
+    });
+    
+    // Update existing expertise documents with similarity to the new expertise
+    for (const existingExpertise of existingExpertises) {
+      const existingDoc = await getDoc(doc(db, 'expertises', existingExpertise));
+      if (existingDoc.exists()) {
+        const existingData = existingDoc.data();
+        await setDoc(doc(db, 'expertises', existingExpertise), {
+          similarity: {
+            ...existingData.similarity,
+            [newExpertise]: similarities[existingExpertise]
+          }
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Error updating expertise similarities:', error);
+  }
+};
 
 export const generateLLMResponse = async (userPost, userExpertise = []) => {
   try {
@@ -50,6 +118,11 @@ export const generateLLMResponse = async (userPost, userExpertise = []) => {
 
     // Only set detectedExpertise if it's not "NO_EXPERTISE"
     const hasExpertise = expertise !== "NO_EXPERTISE";
+
+    // If new expertise is detected, update the similarities
+    if (hasExpertise) {
+      await updateExpertiseSimilarities(expertise);
+    }
 
     return {
       text: response,
