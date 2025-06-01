@@ -30,6 +30,7 @@ const useAuthStore = create((set) => ({
       await setDoc(doc(db, 'users', userCredential.user.uid), {
         displayName,
         email,
+        expertise: [], // Initialize empty expertise array
         createdAt: new Date().toISOString()
       });
 
