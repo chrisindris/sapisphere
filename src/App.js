@@ -5,6 +5,7 @@ import Header from './Views/Header';
 import Menu from './Views/Menu';
 import Login from './components/Login';
 import CreatePost from './components/CreatePost';
+import PostFeed from './components/PostFeed';
 import useAuthStore from './store/authStore';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Menu />
           <div className="main-content">
             <CreatePost />
+            <PostFeed />
           </div>
         </>
       )}
