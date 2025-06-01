@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import ReplyForm from './ReplyForm';
+import RepliesList from './RepliesList';
 import './PostFeed.css';
 
 const PostFeed = () => {
@@ -52,23 +54,33 @@ const PostFeed = () => {
       {posts.length === 0 ? (
         <div className="no-posts">No posts yet. Be the first to post!</div>
       ) : (
-        posts.map(post => (
-          <div 
-            key={post.id} 
-            className={`post-card ${post.isLLMResponse ? 'llm-response' : ''}`}
-          >
-            <div className="post-content">{post.text}</div>
-            <div className="post-meta">
-              <span className="post-author">
-                {post.isLLMResponse 
-                  ? `${post.modelName || 'AI Assistant'}`
-                  : `Posted by: ${post.authorId}`
-                }
-              </span>
-              <span className="post-time">{formatDate(post.createdAt)}</span>
+        posts.map(post => {
+          // Only show reply form for non-LLM posts that have a valid ID
+          const isRootPost = !post.isLLMResponse && post.id;
+          return (
+            <div 
+              key={post.id} 
+              className={`post-card ${post.isLLMResponse ? 'llm-response' : ''}`}
+            >
+              <div className="post-content">{post.text}</div>
+              <div className="post-meta">
+                <span className="post-author">
+                  {post.isLLMResponse 
+                    ? `${post.modelName || 'AI Assistant'}`
+                    : `Posted by: ${post.authorId}`
+                  }
+                </span>
+                <span className="post-time">{formatDate(post.createdAt)}</span>
+              </div>
+              {isRootPost && (
+                <>
+                  <ReplyForm postId={post.id} />
+                  <RepliesList postId={post.id} />
+                </>
+              )}
             </div>
-          </div>
-        ))
+          );
+        })
       )}
     </div>
   );

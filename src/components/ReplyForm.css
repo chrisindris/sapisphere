@@ -1,0 +1,50 @@
+.reply-form-container {
+  margin: 10px 0;
+  padding: 0 20px;
+}
+
+.reply-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reply-input {
+  width: 100%;
+  min-height: 60px;
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 14px;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+}
+
+.reply-input:focus {
+  outline: none;
+  border-color: #0B1F3B;
+}
+
+.reply-button {
+  align-self: flex-end;
+  background-color: #0B1F3B;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.reply-button:hover:not(:disabled) {
+  background-color: #1a2f4f;
+}
+
+.reply-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+} 

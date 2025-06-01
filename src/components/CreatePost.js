@@ -24,24 +24,38 @@ const CreatePost = () => {
         isLLMResponse: false
       });
 
-      // Generate and add LLM response
+      console.log('Created user post:', userPostRef.id);
+
+      // Generate and add LLM response as a reply
       const llmResponse = await generateLLMResponse(postText.trim());
+      console.log('LLM Response:', llmResponse);
+
       if (llmResponse) {
-        await addDoc(collection(db, 'posts'), {
+        await addDoc(collection(db, 'posts', userPostRef.id, 'replies'), {
           text: llmResponse.text,
           authorId: 'llm',
           modelName: llmResponse.modelName,
           createdAt: serverTimestamp(),
           isLLMResponse: true,
-          parentPostId: userPostRef.id
+          expertiseAnalysis: llmResponse.expertiseAnalysis
         });
+
+        console.log('Added LLM reply with expertise analysis:', llmResponse.expertiseAnalysis);
 
         // If expertise was detected, update the user's profile
         if (llmResponse.detectedExpertise) {
+          console.log('Detected expertise:', llmResponse.detectedExpertise);
           const userRef = doc(db, 'users', user.uid);
-          await updateDoc(userRef, {
-            expertise: arrayUnion(llmResponse.detectedExpertise)
-          });
+          try {
+            await updateDoc(userRef, {
+              expertise: arrayUnion(llmResponse.detectedExpertise)
+            });
+            console.log('Updated user profile with expertise');
+          } catch (error) {
+            console.error('Error updating user profile:', error);
+          }
+        } else {
+          console.log('No expertise detected in response');
         }
       }
 
