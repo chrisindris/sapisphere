@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import useAuthStore from '../store/authStore';
 import { generateLLMResponse } from '../utils/llmService';
 import './ReplyForm.css';
@@ -8,7 +8,25 @@ import './ReplyForm.css';
 const ReplyForm = ({ postId, parentReplyId = null }) => {
   const [replyText, setReplyText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userExpertise, setUserExpertise] = useState([]);
   const { user } = useAuthStore();
+
+  useEffect(() => {
+    const fetchUserExpertise = async () => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            setUserExpertise(userDoc.data().expertise || []);
+          }
+        } catch (error) {
+          console.error('Error fetching user expertise:', error);
+        }
+      }
+    };
+
+    fetchUserExpertise();
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +44,7 @@ const ReplyForm = ({ postId, parentReplyId = null }) => {
       });
 
       // Generate and add LLM response
-      const llmResponse = await generateLLMResponse(replyText.trim());
+      const llmResponse = await generateLLMResponse(replyText.trim(), userExpertise);
       if (llmResponse) {
         await addDoc(collection(db, 'posts', postId, 'replies'), {
           text: llmResponse.text,
@@ -35,7 +53,7 @@ const ReplyForm = ({ postId, parentReplyId = null }) => {
           createdAt: serverTimestamp(),
           isLLMResponse: true,
           parentReplyId: parentReplyId,
-          expertiseAnalysis: llmResponse.expertiseAnalysis // Store the expertise analysis
+          expertiseAnalysis: llmResponse.expertiseAnalysis
         });
 
         // If expertise was detected, update the user's profile
@@ -44,6 +62,8 @@ const ReplyForm = ({ postId, parentReplyId = null }) => {
           await updateDoc(userRef, {
             expertise: arrayUnion(llmResponse.detectedExpertise)
           });
+          // Update local state with new expertise
+          setUserExpertise(prev => [...prev, llmResponse.detectedExpertise]);
         }
       }
 

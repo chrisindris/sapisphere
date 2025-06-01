@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 // Initialize the Gemini API
 const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
 
-export const generateLLMResponse = async (userPost) => {
+export const generateLLMResponse = async (userPost, userExpertise = []) => {
   try {
     // Get the Gemini Pro model
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -24,11 +24,17 @@ export const generateLLMResponse = async (userPost) => {
     
     Post: "${userPost}"`;
 
-    // Create a prompt for the regular response
-    const responsePrompt = `You are a helpful AI assistant. A user has posted the following message: "${userPost}". 
-    Please provide a thoughtful, engaging, and helpful response. Keep your response concise and relevant.`;
+    // Create a prompt for the regular response that includes user's expertise
+    const expertiseContext = userExpertise.length > 0 
+      ? `The user has demonstrated expertise in: ${userExpertise.join(', ')}. `
+      : '';
+    
+    const responsePrompt = `You are a helpful AI assistant. ${expertiseContext}A user has posted the following message: "${userPost}". 
+    Please provide a thoughtful, engaging, and helpful response. Keep your response concise and relevant.
+    ${expertiseContext ? 'You can reference their expertise when appropriate, but don\'t force it if not relevant.' : ''}`;
 
     console.log('Sending expertise prompt:', expertisePrompt);
+    console.log('Sending response prompt:', responsePrompt);
 
     // Generate content for both prompts
     const [expertiseResult, responseResult] = await Promise.all([

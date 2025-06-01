@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import useAuthStore from '../store/authStore';
 import { generateLLMResponse } from '../utils/llmService';
 import './CreatePost.css';
@@ -8,7 +8,25 @@ import './CreatePost.css';
 const CreatePost = () => {
   const [postText, setPostText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userExpertise, setUserExpertise] = useState([]);
   const { user } = useAuthStore();
+
+  useEffect(() => {
+    const fetchUserExpertise = async () => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            setUserExpertise(userDoc.data().expertise || []);
+          }
+        } catch (error) {
+          console.error('Error fetching user expertise:', error);
+        }
+      }
+    };
+
+    fetchUserExpertise();
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +45,7 @@ const CreatePost = () => {
       console.log('Created user post:', userPostRef.id);
 
       // Generate and add LLM response as a reply
-      const llmResponse = await generateLLMResponse(postText.trim());
+      const llmResponse = await generateLLMResponse(postText.trim(), userExpertise);
       console.log('LLM Response:', llmResponse);
 
       if (llmResponse) {
@@ -50,6 +68,8 @@ const CreatePost = () => {
             await updateDoc(userRef, {
               expertise: arrayUnion(llmResponse.detectedExpertise)
             });
+            // Update local state with new expertise
+            setUserExpertise(prev => [...prev, llmResponse.detectedExpertise]);
             console.log('Updated user profile with expertise');
           } catch (error) {
             console.error('Error updating user profile:', error);
