@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import useAuthStore from '../store/authStore';
+import { generateLLMResponse } from '../utils/llmService';
 import './CreatePost.css';
 
 const CreatePost = () => {
@@ -15,11 +16,26 @@ const CreatePost = () => {
 
     setIsSubmitting(true);
     try {
-      await addDoc(collection(db, 'posts'), {
+      // Add user's post
+      const userPostRef = await addDoc(collection(db, 'posts'), {
         text: postText.trim(),
         authorId: user.uid,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        isLLMResponse: false
       });
+
+      // Generate and add LLM response
+      const llmResponse = await generateLLMResponse(postText.trim());
+      if (llmResponse) {
+        await addDoc(collection(db, 'posts'), {
+          text: llmResponse,
+          authorId: 'llm',
+          createdAt: serverTimestamp(),
+          isLLMResponse: true,
+          parentPostId: userPostRef.id
+        });
+      }
+
       setPostText(''); // Clear the input after successful post
     } catch (error) {
       console.error('Error creating post:', error);

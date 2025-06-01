@@ -53,10 +53,15 @@ const PostFeed = () => {
         <div className="no-posts">No posts yet. Be the first to post!</div>
       ) : (
         posts.map(post => (
-          <div key={post.id} className="post-card">
+          <div 
+            key={post.id} 
+            className={`post-card ${post.isLLMResponse ? 'llm-response' : ''}`}
+          >
             <div className="post-content">{post.text}</div>
             <div className="post-meta">
-              <span className="post-author">Posted by: {post.authorId}</span>
+              <span className="post-author">
+                {post.isLLMResponse ? 'AI Assistant' : `Posted by: ${post.authorId}`}
+              </span>
               <span className="post-time">{formatDate(post.createdAt)}</span>
             </div>
           </div>

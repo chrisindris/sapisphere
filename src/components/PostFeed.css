@@ -12,6 +12,12 @@
   margin-bottom: 20px;
 }
 
+.post-card.llm-response {
+  background-color: #f8f9fa;
+  border-left: 4px solid #0B1F3B;
+  margin-left: 20px;
+}
+
 .post-content {
   font-family: 'Exo 2', sans-serif;
   font-size: 16px;
