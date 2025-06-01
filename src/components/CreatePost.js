@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { db } from '../firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import useAuthStore from '../store/authStore';
 import { generateLLMResponse } from '../utils/llmService';
 import './CreatePost.css';
@@ -35,6 +35,14 @@ const CreatePost = () => {
           isLLMResponse: true,
           parentPostId: userPostRef.id
         });
+
+        // If expertise was detected, update the user's profile
+        if (llmResponse.detectedExpertise) {
+          const userRef = doc(db, 'users', user.uid);
+          await updateDoc(userRef, {
+            expertise: arrayUnion(llmResponse.detectedExpertise)
+          });
+        }
       }
 
       setPostText(''); // Clear the input after successful post

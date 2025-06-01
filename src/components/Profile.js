@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import useAuthStore from '../store/authStore';
 import './Profile.css';
 
@@ -10,22 +10,21 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (user) {
-        try {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists()) {
-            setProfile(userDoc.data());
-          }
-        } catch (error) {
-          console.error('Error fetching profile:', error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
+    if (!user) return;
 
-    fetchProfile();
+    // Set up real-time listener for user profile
+    const unsubscribe = onSnapshot(doc(db, 'users', user.uid), (doc) => {
+      if (doc.exists()) {
+        setProfile(doc.data());
+      }
+      setLoading(false);
+    }, (error) => {
+      console.error('Error fetching profile:', error);
+      setLoading(false);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, [user]);
 
   if (loading) {
