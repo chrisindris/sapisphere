@@ -1,5 +1,34 @@
 .App {
-  text-align: center;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+}
+
+.content-left {
+  flex: 1;
+  min-width: 0; /* Prevents flex item from overflowing */
+}
+
+.content-right {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+
+  .content-right {
+    width: 100%;
+  }
 }
 
 .App-logo {

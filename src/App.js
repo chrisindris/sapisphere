@@ -6,6 +6,7 @@ import Menu from './Views/Menu';
 import Login from './components/Login';
 import CreatePost from './components/CreatePost';
 import PostFeed from './components/PostFeed';
+import Profile from './components/Profile';
 import useAuthStore from './store/authStore';
 
 function App() {
@@ -24,8 +25,13 @@ function App() {
         <>
           <Menu />
           <div className="main-content">
-            <CreatePost />
-            <PostFeed />
+            <div className="content-left">
+              <CreatePost />
+              <PostFeed />
+            </div>
+            <div className="content-right">
+              <Profile />
+            </div>
           </div>
         </>
       )}
