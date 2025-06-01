@@ -28,8 +28,9 @@ const CreatePost = () => {
       const llmResponse = await generateLLMResponse(postText.trim());
       if (llmResponse) {
         await addDoc(collection(db, 'posts'), {
-          text: llmResponse,
+          text: llmResponse.text,
           authorId: 'llm',
+          modelName: llmResponse.modelName,
           createdAt: serverTimestamp(),
           isLLMResponse: true,
           parentPostId: userPostRef.id

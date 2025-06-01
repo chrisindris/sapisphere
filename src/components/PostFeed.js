@@ -60,7 +60,10 @@ const PostFeed = () => {
             <div className="post-content">{post.text}</div>
             <div className="post-meta">
               <span className="post-author">
-                {post.isLLMResponse ? 'AI Assistant' : `Posted by: ${post.authorId}`}
+                {post.isLLMResponse 
+                  ? `${post.modelName || 'AI Assistant'}`
+                  : `Posted by: ${post.authorId}`
+                }
               </span>
               <span className="post-time">{formatDate(post.createdAt)}</span>
             </div>

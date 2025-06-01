@@ -17,7 +17,10 @@ export const generateLLMResponse = async (userPost) => {
     const response = await result.response;
     const text = response.text();
 
-    return text;
+    return {
+      text,
+      modelName: "Gemini 1.5 Flash"
+    };
   } catch (error) {
     console.error('Error generating LLM response:', error);
     return null;
